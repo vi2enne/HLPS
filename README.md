@@ -1,6 +1,6 @@
 # HLPS
 
-This is a PyTorch implementation for our paper "[Probabilistic Subgoal Representations for Hierarchical Reinforcement learning] (ICML 2024).
+This is a PyTorch implementation for our paper "Probabilistic Subgoal Representations for Hierarchical Reinforcement learning" (ICML 2024).
 
 ## Dependencies
 - Python 3.7
