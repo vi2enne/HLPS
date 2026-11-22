@@ -28,6 +28,9 @@ def launch(args):
     if args.env_name != "NChain-v1":
         env.env.env.wrapped_env.seed(args.seed)
         test_env.env.env.wrapped_env.seed(args.seed)
+        for e in (env, test_env):
+            e.env.goal_space.seed(args.seed)
+            e.env.maze_space.seed(args.seed)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -44,6 +47,7 @@ def launch(args):
     env_params = get_env_params(env)
     env_params['max_test_timesteps'] = test_env._max_episode_steps
     sac_trainer = hlps_agent(args, env, env_params, test_env, test_env1, test_env2)
+    sac_trainer.hi_act_space.seed(args.seed)
     if args.eval:
         if not args.resume:
             print("random policy !!!")
