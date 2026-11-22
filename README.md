@@ -1,6 +1,7 @@
-# HLPS
+# HLPS: Probabilistic Subgoal Representations for Hierarchical Reinforcement learning
 
-This is a PyTorch implementation for our paper "Probabilistic Subgoal Representations for Hierarchical Reinforcement learning" (ICML 2024).
+PyTorch implementation of *Probabilistic Subgoal Representations for Hierarchical Reinforcement learning*
+by Vivienne Huiling Wang, Tinghuai Wang, Wenyan Yang, Joni-Kristian Kämäräinen and Joni Pajarinen (ICML 2024, [arXiv:2406.16707](https://arxiv.org/abs/2406.16707)).
 
 ## Dependencies
 - Python 3.7
