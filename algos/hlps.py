@@ -248,8 +248,8 @@ class hlps_agent:
             if self.whole_obs:
                 ag = obs.copy()
 
-            ep_latents.append(torch.Tensor(ag).T)
-            ep_fullobs.append(torch.Tensor(obs[:self.low_dim]).T)
+            ep_latents.append(torch.Tensor(ag))
+            ep_fullobs.append(torch.Tensor(obs[:self.low_dim]))
 
             time_window = int(self.args.time_window)
             for _ in range(time_window-1):
@@ -342,8 +342,8 @@ class hlps_agent:
                 obs = obs_new
                 ag = ag_new
 
-                ep_latents.append(torch.Tensor(ag).T)
-                ep_fullobs.append(torch.Tensor(obs[:self.low_dim]).T)
+                ep_latents.append(torch.Tensor(ag))
+                ep_fullobs.append(torch.Tensor(obs[:self.low_dim]))
 
                 # batch gp
                 X = torch.stack(ep_fullobs[-min(len(ep_fullobs), time_window):], dim = 0).to(self.device).unsqueeze(dim=0)
@@ -596,8 +596,8 @@ class hlps_agent:
                 with torch.no_grad():
                     act_obs, act_g = self._preproc_inputs(obs, g)
                     ag = self.representation(torch.Tensor(obs).to(self.device)).detach().cpu().numpy()[0]
-                    ep_fullobs.append(torch.Tensor(obs[:self.low_dim]).T)
-                    ep_latents.append(torch.Tensor(ag).T)
+                    ep_fullobs.append(torch.Tensor(obs[:self.low_dim]))
+                    ep_latents.append(torch.Tensor(ag))
 
                     if num==0:
                         ## duplicate first state

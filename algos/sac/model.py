@@ -129,7 +129,7 @@ class QNetwork_phi(nn.Module):
         return x1, x2
 
     def phi(self, obs):
-        if len(obs.shape) is 1:
+        if len(obs.shape) == 1:
             obs = obs.unsqueeze(0)
         s = self.obs_encoder(obs)
         if self.tanh_output:

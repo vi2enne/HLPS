@@ -373,7 +373,7 @@ class RepresentationNetwork(nn.Module):
         self.abs_range = abs_range
 
     def forward(self, obs):
-        if len(obs.shape) is 1:
+        if len(obs.shape) == 1:
             obs = obs.unsqueeze(0)
         s = self.obs_encoder(obs)
         return s
@@ -404,7 +404,7 @@ class DynamicsNetwork(nn.Module):
         self.device = device
 
     def phi(self, obs):
-        if len(obs.shape) is 1:
+        if len(obs.shape) == 1:
             obs = obs.unsqueeze(0)
         s = self.obs_encoder(obs)
         return s
