@@ -30,13 +30,14 @@ class GPlayer(nn.Module):
         :return: Z: Latent subgoal space
         '''
         b,l,c = Y.size()
-        Y = Y.cpu().float()
-        D = D.cpu().float()
+        Y = Y.cpu().double()
+        D = D.cpu().double()
 
-        K = torch.exp(self.gamma2) * (1 + math.sqrt(3) * D / torch.exp(self.ell)) * torch.exp(-math.sqrt(3) * D / torch.exp(self.ell))
-        I = torch.eye(l).expand(b, l, l).float()
-        X = torch.cholesky_solve(Y, K+torch.exp(self.sigma2)*I)
-        Z = K.bmm(X)
+        K = torch.exp(self.gamma2.double()) * (1 + math.sqrt(3) * D / torch.exp(self.ell.double())) * torch.exp(-math.sqrt(3) * D / torch.exp(self.ell.double()))
+        I = torch.eye(l, dtype=torch.float64).expand(b, l, l)
+        L = torch.linalg.cholesky(K + torch.exp(self.sigma2.double()) * I)
+        X = torch.cholesky_solve(Y, L)
+        Z = K.bmm(X).float()
         return Z
 
 

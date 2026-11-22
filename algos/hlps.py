@@ -431,6 +431,7 @@ class hlps_agent:
 
         file_name = "{}_{}_{}".format(self.args.env_name, self.args.algo_name, self.args.seed)
         output_df = pd.DataFrame(output_data)
+        os.makedirs("./results", exist_ok=True)
         output_df.to_csv(os.path.join("./results", file_name+".csv"), float_format="%.4f", index=False)
 
     # pre_process the inputs
@@ -606,7 +607,7 @@ class hlps_agent:
                     ## online gp
                     X = torch.stack(ep_fullobs[-2:], dim = 0).to(self.device)
                     D = torch.cdist(X, X)
-                    A = expm(F * D.cpu().numpy())
+                    A = expm(F * D[0, 1].item())
                     Q = Pinf - A.dot(Pinf).dot(A.T)
                     M = A.dot(M)
                     P = A.dot(P).dot(A.T) + Q
@@ -683,11 +684,11 @@ class hlps_agent:
         hi_obs, hi_obs_next = self.representation(sample_data[2]), self.representation(sample_data[3])
 
         if update_gp:
-            emb_combined = torch.cat((obs, obs_next, hi_obs, hi_obs_next), dim=0)
+            emb_combined = torch.stack((obs, obs_next, hi_obs, hi_obs_next), dim=0)
             emb_combined = torch.transpose(emb_combined,0,1).reshape(1, b*l, obs.size()[-1])
 
-            D = torch.cdist(torch.transpose(sample_data,0,1).reshape(1, b*l, -1),
-                            torch.transpose(sample_data,0,1).reshape(1, b*l, -1))
+            points = torch.transpose(sample_data,0,1).reshape(1, b*l, -1).double()
+            D = torch.cdist(points, points, compute_mode='donot_use_mm_for_euclid_dist')
             ag_Z = self.gplayer(D, emb_combined).to(self.device).reshape(b, l, obs.size()[-1])
 
             obs_z = ag_Z[:,0,:]
@@ -725,7 +726,7 @@ class hlps_agent:
             representation_loss = (min_dist + max_dist).mean()
             # add l2 regularization
             representation_loss += self.feature_reg * (obs / self.abs_range).pow(2).mean()
-            representation_loss = torch.log(1 + torch.exp(representation_loss))
+            representation_loss = torch.nn.functional.softplus(representation_loss)
             min_dist = torch.clamp((obs - obs_next).pow(2).mean(dim=1), min=0.)
             max_dist = torch.clamp((hi_obs - hi_obs_next).pow(2).mean(dim=1), min=0.)
             representation_loss *= ((1 + min_dist)/(1 + max_dist)).mean()

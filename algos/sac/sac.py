@@ -115,17 +115,13 @@ class SAC(object):
                 policy_loss += representation_loss
 
 
-        self.critic_optim.zero_grad()
-        qf1_loss.backward()
-        self.critic_optim.step()
-
-        self.critic_optim.zero_grad()
-        qf2_loss.backward()
-        self.critic_optim.step()
-
         self.policy_optim.zero_grad()
         policy_loss.backward()
         self.policy_optim.step()
+
+        self.critic_optim.zero_grad()
+        (qf1_loss + qf2_loss).backward()
+        self.critic_optim.step()
 
         if self.automatic_entropy_tuning:
             alpha_loss = -(self.log_alpha * (log_pi + self.target_entropy).detach()).mean()
